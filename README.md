@@ -71,11 +71,14 @@ $ cd turtle-wallet-electron
 # install dependencies
 $ npm install
 
+# compile the typescript
+$ tsc && tsc main.ts
+
 # create build+dist directory
 $ mkdir -p ./build && mkdir -p ./dist
 
 # copy/symlink icons from assets, required for packaging
-$ cp ./src/assets/icon.* ./build/
+$ cp ./tsdist/assets/icon.* ./build/
 
 # build GNU/Linux package
 $ mkdir -p ./bin/lin
