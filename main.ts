@@ -1,32 +1,44 @@
-const { app, dialog, Tray, Menu } = require('electron');
-const path = require('path');
-const fs = require('fs');
-const url = require('url');
-const https = require('https');
-const platform = require('os').platform();
-const crypto = require('crypto');
-const Store = require('electron-store');
+import { app, dialog, Tray, Menu } from 'electron';
+import * as crypto from 'crypto';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as url from 'url';
+import * as https from 'https';
+import * as os from 'os';
+import * as Store from 'electron-store';
+import * as log from 'electron-log';
+import * as splash from '@trodi/electron-splashscreen';
+import * as config from './tsdist/js/ws_config';
+import { IncomingMessage } from 'http';
+
+interface AppConfig {
+    promptExit: boolean;
+    promptShown: boolean;
+    needToExit: boolean;
+    debug: any;
+    walletConfig: any;
+    publicNodesUpdated: boolean;
+}
+
+const platform : string = os.platform();
 const settings = new Store({ name: 'Settings' });
-const log = require('electron-log');
-const splash = require('@trodi/electron-splashscreen');
-const config = require('./tsdist/js/ws_config');
 
-const IS_DEV = (process.argv[1] === 'dev' || process.argv[2] === 'dev');
-const IS_DEBUG = IS_DEV || process.argv[1] === 'debug' || process.argv[2] === 'debug';
-const LOG_LEVEL = IS_DEBUG ? 'debug' : 'warn';
-const WALLET_CFGFILE = path.join(app.getPath('userData'), 'wconfig.txt');
+const IS_DEV : boolean = (process.argv[1] === 'dev' || process.argv[2] === 'dev');
+const IS_DEBUG : boolean = IS_DEV || process.argv[1] === 'debug' || process.argv[2] === 'debug';
+const LOG_LEVEL : log.LevelOption = IS_DEBUG ? 'debug' : 'warn';
+const WALLET_CFGFILE : string = path.join(app.getPath('userData'), 'wconfig.txt');
 
-const WALLETSHELL_VERSION = app.getVersion() || '0.3.x';
-const SERVICE_FILENAME = (platform === 'win32' ? `${config.walletServiceBinaryFilename}.exe` : config.walletServiceBinaryFilename);
-const SERVICE_OSDIR = (platform === 'win32' ? 'win' : (platform === 'darwin' ? 'osx' : 'lin'));
-const DEFAULT_SERVICE_BIN = path.join(process.resourcesPath, 'bin', SERVICE_OSDIR, SERVICE_FILENAME);
+const WALLETSHELL_VERSION : string = app.getVersion() || '0.3.x';
+const SERVICE_FILENAME : string = (platform === 'win32' ? `${config.walletServiceBinaryFilename}.exe` : config.walletServiceBinaryFilename);
+const SERVICE_OSDIR : string = (platform === 'win32' ? 'win' : (platform === 'darwin' ? 'osx' : 'lin'));
+const DEFAULT_SERVICE_BIN : string = path.join(process.resourcesPath, 'bin', SERVICE_OSDIR, SERVICE_FILENAME);
 
-const DEFAULT_REMOTE_NODE = config.remoteNodeListFallback
+const DEFAULT_REMOTE_NODE : string = config.remoteNodeListFallback
     .map((a) => ({ sort: Math.random(), value: a }))
     .sort((a, b) => a.sort - b.sort)
     .map((a) => a.value)[0];
 
-const DEFAULT_SETTINGS = {
+const DEFAULT_SETTINGS : object = {
     service_bin: DEFAULT_SERVICE_BIN,
     service_host: '127.0.0.1',
     service_port: config.walletServiceRpcPort,
@@ -40,17 +52,27 @@ const DEFAULT_SETTINGS = {
     tray_minimize: false,
     tray_close: false,
     darkmode: true,
-    service_config_format: config.walletServiceConfigFormat
+    service_config_format: config.walletServiceConfigFormat,
 };
-const DEFAULT_SIZE = { width: 840, height: 680 };
-const WIN_TITLE = `${config.appName} ${WALLETSHELL_VERSION} - ${config.appDescription}`;
 
-app.prompExit = true;
-app.prompShown = false;
-app.needToExit = false;
-app.debug = IS_DEBUG;
-app.walletConfig = WALLET_CFGFILE;
-app.publicNodesUpdated = false;
+interface DefaultSize {
+    width: number,
+    height: number,
+}
+
+const DEFAULT_SIZE : DefaultSize = { width: 840, height: 680 };
+
+const WIN_TITLE : string = `${config.appName} ${WALLETSHELL_VERSION} - ${config.appDescription}`;
+
+const appConfig: AppConfig = {
+    promptExit: true,
+    promptShown: false,
+    needToExit: false,
+    debug: IS_DEBUG,
+    walletConfig: WALLET_CFGFILE,
+    publicNodesUpdated: false,
+}
+
 app.setAppUserModelId(config.appId);
 
 log.transports.console.level = LOG_LEVEL;
@@ -121,113 +143,110 @@ function createWindow() {
     });
 
     win.on('close', (e) => {
-        if ((settings.get('tray_close') && !app.needToExit && platform !== 'darwin')) {
+        if ((settings.get('tray_close') && !appConfig.needToExit)) {
             e.preventDefault();
             win.hide();
-        } else if (app.prompExit) {
+        } else if (appConfig.promptExit) {
             e.preventDefault();
-            if (app.prompShown) return;
+            if (appConfig.promptShown) return;
             let msg = 'Are you sure want to exit?';
-            app.prompShown = true;
+            appConfig.promptShown = true;
             dialog.showMessageBox({
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 title: 'Exit Confirmation',
                 message: msg
             }, function (response) {
-                app.prompShown = false;
+                appConfig.promptShown = false;
                 if (response === 0) {
-                    app.prompExit = false;
+                    appConfig.promptExit = false;
                     win.webContents.send('cleanup', 'Clean it up, Dad!');
                 } else {
-                    app.prompExit = true;
-                    app.needToExit = false;
+                    appConfig.promptExit = true;
+                    appConfig.needToExit = false;
                 }
             });
         }
     });
 
-    if (platform !== 'darwin') {
-        let contextMenu = Menu.buildFromTemplate([
+    let contextMenu = Menu.buildFromTemplate([
+        { label: 'Minimize to tray', click: () => { win.hide(); } },
+        {
+            label: 'Quit', click: () => {
+                appConfig.needToExit = true;
+                if (win) {
+                    win.close();
+                } else {
+                    process.exit(0);
+                }
+            }
+        }
+    ]);
+
+    tray = new Tray(trayIcon);
+    tray.setPressedImage(trayIconHide);
+    tray.setTitle(config.appName);
+    tray.setToolTip(config.appSlogan);
+    tray.setContextMenu(contextMenu);
+
+
+    tray.on('click', () => {
+        if (!win.isFocused() && win.isVisible()) {
+            win.focus();
+        } else if (settings.get('tray_minimize', false)) {
+            if (win.isVisible()) {
+                win.hide();
+            } else {
+                win.show();
+            }
+        } else {
+            if (win.isMinimized()) {
+                win.restore();
+                win.focus();
+            } else {
+                win.minimize();
+            }
+        }
+    });
+
+    win.on('show', () => {
+        tray.setHighlightMode('always');
+        tray.setImage(trayIcon);
+        contextMenu = Menu.buildFromTemplate([
             { label: 'Minimize to tray', click: () => { win.hide(); } },
             {
                 label: 'Quit', click: () => {
-                    app.needToExit = true;
-                    if (win) {
-                        win.close();
-                    } else {
-                        process.exit(0);
-                    }
+                    appConfig.needToExit = true;
+                    win.close();
                 }
             }
         ]);
-
-        tray = new Tray(trayIcon);
-        tray.setPressedImage(trayIconHide);
-        tray.setTitle(config.appName);
-        tray.setToolTip(config.appSlogan);
         tray.setContextMenu(contextMenu);
+        tray.setToolTip(config.appSlogan);
+    });
 
+    win.on('hide', () => {
+        tray.setHighlightMode('never');
+        tray.setImage(trayIconHide);
 
-        tray.on('click', () => {
-            if (!win.isFocused() && win.isVisible()) {
-                win.focus();
-            } else if (settings.get('tray_minimize', false)) {
-                if (win.isVisible()) {
-                    win.hide();
-                } else {
-                    win.show();
-                }
-            } else {
-                if (win.isMinimized()) {
-                    win.restore();
-                    win.focus();
-                } else {
-                    win.minimize();
+        contextMenu = Menu.buildFromTemplate([
+            { label: 'Restore', click: () => { win.show(); } },
+            {
+                label: 'Quit', click: () => {
+                    appConfig.needToExit = true;
+                    win.close();
                 }
             }
-        });
+        ]);
+        tray.setContextMenu(contextMenu);
+    });
 
-        win.on('show', () => {
-            tray.setHighlightMode('always');
-            tray.setImage(trayIcon);
-            contextMenu = Menu.buildFromTemplate([
-                { label: 'Minimize to tray', click: () => { win.hide(); } },
-                {
-                    label: 'Quit', click: () => {
-                        app.needToExit = true;
-                        win.close();
-                    }
-                }
-            ]);
-            tray.setContextMenu(contextMenu);
-            tray.setToolTip(config.appSlogan);
-        });
-
-        win.on('hide', () => {
-            tray.setHighlightMode('never');
-            tray.setImage(trayIconHide);
-            if (platform === 'darwin') return;
-
-            contextMenu = Menu.buildFromTemplate([
-                { label: 'Restore', click: () => { win.show(); } },
-                {
-                    label: 'Quit', click: () => {
-                        app.needToExit = true;
-                        win.close();
-                    }
-                }
-            ]);
-            tray.setContextMenu(contextMenu);
-        });
-
-        win.on('minimize', (event) => {
-            if (settings.get('tray_minimize') && platform !== 'darwin') {
-                event.preventDefault();
-                win.hide();
-            }
-        });
-    }
+    win.on('minimize', (event) => {
+        if (settings.get('tray_minimize')) {
+            event.preventDefault();
+            win.hide();
+        }
+    });
 
     win.on('closed', () => {
         win = null;
@@ -247,7 +266,7 @@ function createWindow() {
     });
 }
 
-function storeNodeList(pnodes) {
+function storeNodeList(pnodes: any) {
     if(!pnodes) return;
 
     if(!pnodes.length) return;
@@ -273,11 +292,11 @@ function storeNodeList(pnodes) {
 
 function doNodeListUpdate() {
     try {
-        https.get(config.remoteNodeListUpdateUrl, (res) => {
+        https.get(config.remoteNodeListUpdateUrl, (res: IncomingMessage) => {
             var result = '';
             res.setEncoding('utf8');
 
-            res.on('data', (chunk) => {
+            res.on('data', (chunk: any) => {
                 result += chunk;
             });
 
@@ -297,7 +316,7 @@ function doNodeListUpdate() {
                     storeNodeList(false);
                 }
             });
-        }).on('error', (e) => {
+        }).on('error', (e: Error) => {
             log.debug(`Failed to update public-node list: ${e.message}`);
             storeNodeList(false);
         });
@@ -326,14 +345,9 @@ function serviceBinCheck() {
     if (DEFAULT_SERVICE_BIN.startsWith('/tmp')) {
         log.warn(`AppImage env, copying service bin file`);
         let targetPath = path.join(app.getPath('userData'), SERVICE_FILENAME);
+        fs.renameSync(targetPath, `${targetPath}.bak`);
         try {
-            fs.renameSync(targetPath, `${targetPath}.bak`, (err) => {
-                if (err) log.error(err);
-            });
-        } catch (_e) { }
-
-        try {
-            fs.copyFile(DEFAULT_SERVICE_BIN, targetPath, (err) => {
+            fs.copyFile(DEFAULT_SERVICE_BIN, targetPath, (err: NodeJS.ErrnoException) => {
                 if (err) {
                     log.error(err);
                     return;
@@ -360,7 +374,7 @@ function serviceBinCheck() {
 }
 
 function initSettings() {
-    Object.keys(DEFAULT_SETTINGS).forEach((k) => {
+    Object.keys(DEFAULT_SETTINGS).forEach((k: string) => {
         if (!settings.has(k) || settings.get(k) === null) {
             settings.set(k, DEFAULT_SETTINGS[k]);
         }
@@ -368,18 +382,17 @@ function initSettings() {
     settings.set('service_password', crypto.randomBytes(32).toString('hex'));
     settings.set('version', WALLETSHELL_VERSION);
     serviceBinCheck();
-    fs.unlink(WALLET_CFGFILE, (err) => {
+    fs.unlink(WALLET_CFGFILE, (err: NodeJS.ErrnoException) => {
         if (err) log.debug(err.code === 'ENOENT' ? 'No stalled wallet config' : err.message);
     });
 }
 
-app.on('browser-window-created', function (e, window) {
+app.on('browser-window-created', function (e: Electron.Event, window: Electron.BrowserWindow) {
     window.setMenuBarVisibility(false);
     window.setAutoHideMenuBar(false);
 });
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-    //if (platform !== 'darwin')
     app.quit();
 });
 
@@ -395,18 +408,18 @@ process.on('uncaughtException', function (e) {
     process.exit(1);
 });
 
-process.on('beforeExit', (code) => {
+process.on('beforeExit', (code: number) => {
     log.debug(`beforeExit code: ${code}`);
 });
 
-process.on('exit', (code) => {
+process.on('exit', (code: number) => {
     // just to be sure
     try { fs.unlinkSync(WALLET_CFGFILE); } catch (e) { }
     log.debug(`exit with code: ${code}`);
 });
 
-process.on('warning', (warning) => {
-    log.warn(`${warning.code}, ${warning.name}`);
+process.on('warning', (warning: Error) => {
+    log.warn(warning.name);
 });
 
 const silock = app.requestSingleInstanceLock();
@@ -426,10 +439,10 @@ app.on('ready', () => {
     // try to target center pos of primary display
     let eScreen = require('electron').screen;
     let primaryDisp = eScreen.getPrimaryDisplay();
-    let tx = Math.ceil((primaryDisp.workAreaSize.width - DEFAULT_SIZE.width) / 2);
-    let ty = Math.ceil((primaryDisp.workAreaSize.height - (DEFAULT_SIZE.height)) / 2);
+    let tx: number = Math.ceil((primaryDisp.workAreaSize.width - DEFAULT_SIZE.width) / 2);
+    let ty: number = Math.ceil((primaryDisp.workAreaSize.height - (DEFAULT_SIZE.height)) / 2);
     if (tx > 0 && ty > 0) {
-        try { win.setPosition(parseInt(tx, 10), parseInt(ty, 10)); } catch (_e) { }
+        try { win.setPosition(parseInt(tx.toString(), 10), parseInt(ty.toString(), 10)); } catch (_e) { }
     }
 
     // remove old settings cruft if exist

@@ -10,8 +10,8 @@ config.appGitRepo = 'https://github.com/turtlecoin/turtle-wallet-electron';
 // default port number for your daemon (e.g. TurtleCoind)
 config.daemonDefaultRpcPort = 11898;
 
-// wallet file created by this app will have this extension
-config.walletFileDefaultExt = 'twl';
+// wallet file created by this app will have this extension 
+config.walletFileDefaultExt = 'wallet';  // let's keep all of the filenames consistent
 
 // change this to match your wallet service executable filename
 config.walletServiceBinaryFilename = 'turtle-service';
