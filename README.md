@@ -72,7 +72,7 @@ $ cd turtle-wallet-electron
 $ npm install
 
 # compile the typescript
-$ tsc && tsc main.ts
+$ tsc ; tsc main.ts
 
 # create build+dist directory
 $ mkdir -p ./build && mkdir -p ./dist
