@@ -143,7 +143,7 @@ function createWindow() {
     });
 
     win.on('close', (e) => {
-        if ((settings.get('tray_close') && !appConfig.needToExit)) {
+        if ((settings.get('tray_close') && !appConfig.needToExit && platform !== 'darwin')) {
             e.preventDefault();
             win.hide();
         } else if (appConfig.promptExit) {
@@ -169,88 +169,91 @@ function createWindow() {
         }
     });
 
-    let contextMenu = Menu.buildFromTemplate([
-        { label: 'Minimize to tray', click: () => { win.hide(); } },
-        {
-            label: 'Quit', click: () => {
-                appConfig.needToExit = true;
-                if (win) {
-                    win.close();
-                } else {
-                    process.exit(0);
-                }
-            }
-        }
-    ]);
-
-    tray = new Tray(trayIcon);
-    tray.setPressedImage(trayIconHide);
-    tray.setTitle(config.appName);
-    tray.setToolTip(config.appSlogan);
-    tray.setContextMenu(contextMenu);
-
-
-    tray.on('click', () => {
-        if (!win.isFocused() && win.isVisible()) {
-            win.focus();
-        } else if (settings.get('tray_minimize', false)) {
-            if (win.isVisible()) {
-                win.hide();
-            } else {
-                win.show();
-            }
-        } else {
-            if (win.isMinimized()) {
-                win.restore();
-                win.focus();
-            } else {
-                win.minimize();
-            }
-        }
-    });
-
-    win.on('show', () => {
-        tray.setHighlightMode('always');
-        tray.setImage(trayIcon);
-        contextMenu = Menu.buildFromTemplate([
+    if (platform !== 'darwin') {
+        let contextMenu = Menu.buildFromTemplate([
             { label: 'Minimize to tray', click: () => { win.hide(); } },
             {
                 label: 'Quit', click: () => {
                     appConfig.needToExit = true;
-                    win.close();
+                    if (win) {
+                        win.close();
+                    } else {
+                        process.exit(0);
+                    }
                 }
             }
         ]);
-        tray.setContextMenu(contextMenu);
+
+        tray = new Tray(trayIcon);
+        tray.setPressedImage(trayIconHide);
+        tray.setTitle(config.appName);
         tray.setToolTip(config.appSlogan);
-    });
+        tray.setContextMenu(contextMenu);
 
-    win.on('hide', () => {
-        tray.setHighlightMode('never');
-        tray.setImage(trayIconHide);
 
-        contextMenu = Menu.buildFromTemplate([
-            { label: 'Restore', click: () => { win.show(); } },
-            {
-                label: 'Quit', click: () => {
-                    appConfig.needToExit = true;
-                    win.close();
+        tray.on('click', () => {
+            if (!win.isFocused() && win.isVisible()) {
+                win.focus();
+            } else if (settings.get('tray_minimize', false)) {
+                if (win.isVisible()) {
+                    win.hide();
+                } else {
+                    win.show();
+                }
+            } else {
+                if (win.isMinimized()) {
+                    win.restore();
+                    win.focus();
+                } else {
+                    win.minimize();
                 }
             }
-        ]);
-        tray.setContextMenu(contextMenu);
-    });
+        });
 
-    win.on('minimize', (event) => {
-        if (settings.get('tray_minimize')) {
-            event.preventDefault();
-            win.hide();
-        }
-    });
+        win.on('show', () => {
+            tray.setHighlightMode('always');
+            tray.setImage(trayIcon);
+            contextMenu = Menu.buildFromTemplate([
+                { label: 'Minimize to tray', click: () => { win.hide(); } },
+                {
+                    label: 'Quit', click: () => {
+                        appConfig.needToExit = true;
+                        win.close();
+                    }
+                }
+            ]);
+            tray.setContextMenu(contextMenu);
+            tray.setToolTip(config.appSlogan);
+        });
 
-    win.on('closed', () => {
-        win = null;
-    });
+        win.on('hide', () => {
+            tray.setHighlightMode('never');
+            tray.setImage(trayIconHide);
+            if (platform === 'darwin') return;
+
+            contextMenu = Menu.buildFromTemplate([
+                { label: 'Restore', click: () => { win.show(); } },
+                {
+                    label: 'Quit', click: () => {
+                        appConfig.needToExit = true;
+                        win.close();
+                    }
+                }
+            ]);
+            tray.setContextMenu(contextMenu);
+        });
+
+        win.on('minimize', (event) => {
+            if (settings.get('tray_minimize') && platform !== 'darwin') {
+                event.preventDefault();
+                win.hide();
+            }
+        });
+
+        win.on('closed', () => {
+            win = null;
+        });
+    }
 
     win.setMenu(null);
 
