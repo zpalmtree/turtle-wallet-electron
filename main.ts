@@ -1,15 +1,15 @@
 import { app, dialog, Tray, Menu } from 'electron';
+import { IncomingMessage } from 'http';
+import * as Store from 'electron-store';
 import * as crypto from 'crypto';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
 import * as https from 'https';
 import * as os from 'os';
-import * as Store from 'electron-store';
 import * as log from 'electron-log';
 import * as splash from '@trodi/electron-splashscreen';
 import * as config from './tsdist/js/ws_config';
-import { IncomingMessage } from 'http';
 
 interface AppConfig {
     promptExit: boolean;

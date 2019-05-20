@@ -1,22 +1,25 @@
 /*jshint bitwise: false*/
 /* global AbortController */
-const os = require('os');
-const net = require('net');
-const path = require('path');
-const fs = require('fs');
-const { clipboard, remote, ipcRenderer, shell } = require('electron');
-const Store = require('electron-store');
-const Mousetrap = require('./extras/mousetrap.min.js');
-const autoComplete = require('./extras/auto-complete');
+import os from 'os';
+import net from 'net';
+import path from 'path';
+import fs from 'fs';
+import { clipboard, remote, ipcRenderer, shell } from 'electron';
+import Store from 'electron-store';
+import Mousetrap from 'mousetrap';
+import autoComplete from 'js-autocomplete';
+import async from 'async';
+import AgGrid from 'ag-grid-community';
+
 const wsutil = require('./ws_utils');
 const WalletShellSession = require('./ws_session');
 const WalletShellManager = require('./ws_manager');
 const config = require('./ws_config');
 const syncStatus = require('./ws_constants').syncStatus;
-const async = require('async');
-const AgGrid = require('ag-grid-community');
+
 const wsmanager = new WalletShellManager();
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
+
 const wsession = new WalletShellSession(sessConfig);
 const settings = new Store({ name: 'Settings' });
 const WalletShellAddressbook = require('./ws_addressbook');
