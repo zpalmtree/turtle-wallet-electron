@@ -1748,6 +1748,11 @@ function handleWalletCreate() {
         // validate path
         wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath) => {
 
+            // validate password
+            if (!passwordValue.length) {
+                formMessageSet('create', 'error', `Please enter a password, creating wallet without a password will not be supported!`);
+                return;
+            }
             settings.set('recentWalletDir', path.dirname(finalPath));
 
             // user already confirm to overwrite
@@ -1792,13 +1797,6 @@ function handleWalletImportKeys() {
         let viewKeyValue = importKeyInputViewKey.value ? importKeyInputViewKey.value.trim() : '';
         let spendKeyValue = importKeyInputSpendKey.value ? importKeyInputSpendKey.value.trim() : '';
         let scanHeightValue = importKeyInputScanHeight.value ? parseInt(importKeyInputScanHeight.value, 10) : 0;
-
-        // validate path
-        wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath) => {
-            if (!passwordValue.length) {
-                formMessageSet('import', 'error', `Please enter a password, creating wallet without a password will not be supported!`);
-                return;
-        }
 
         // validate path
         wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath) => {
