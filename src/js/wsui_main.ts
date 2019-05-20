@@ -1798,6 +1798,13 @@ function handleWalletImportKeys() {
             if (!passwordValue.length) {
                 formMessageSet('import', 'error', `Please enter a password, creating wallet without a password will not be supported!`);
                 return;
+        }
+
+        // validate path
+        wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath) => {
+            if (!passwordValue.length) {
+                formMessageSet('import', 'error', `Please enter a password, creating wallet without a password will not be supported!`);
+                return;
             }
 
             if (scanHeightValue < 0 || scanHeightValue.toPrecision().indexOf('.') !== -1) {
