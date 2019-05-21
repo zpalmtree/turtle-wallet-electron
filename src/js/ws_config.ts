@@ -1,98 +1,131 @@
-var config = {};
-
 // self explanatory, your application name, descriptions, etc
-config.appName = 'WalletShell';
-config.appDescription = 'TurtleCoin Wallet';
-config.appSlogan = 'Slow and steady wins the race!';
-config.appId = 'lol.turtlecoin.walletshell';
-config.appGitRepo = 'https://github.com/turtlecoin/turtle-wallet-electron';
 
-// default port number for your daemon (e.g. TurtleCoind)
-config.daemonDefaultRpcPort = 11898;
+interface IConfig {
+  appName: string,
+  appDescription: string,
+  appSlogan: string,
+  appId: string,
+  appGitRepo: string,
+  daemonDefaultRpcPort: number,
+  walletFileDefaultExt: string,
+  walletServiceBinaryFilename: string,
+  walletServiceBinaryVersion: string,
+  walletServiceConfigFormat: string,
+  walletServiceRpcPort: number,
+  blockExplorerUrl: string,
+  remoteNodeDefaultHost: string,
+  remoteNodeListUpdateUrl: string,
+  remoteNodeListFiltered: boolean,
+  remoteNodeListFallback: string[],
+  remoteNodeCacheSupported: boolean,
+  remoteNodeSslSupported: boolean,
+  assetName: string,
+  assetTicker: string,
+  addressPrefix: string,
+  addressLength: number,
+  integratedAddressLength: number,
+  minimumFee: number,
+  mininumSend: number,
+  defaultMixin: number,
+  decimalPlaces: number,
+  decimalDivisor: number,
+  addressBookObfuscateEntries: boolean,
+  addressBookObfuscationKey: string,
+  addressBookSampleEntries: any[],
+  addressBookCipherConfig: object,
+}
 
-// wallet file created by this app will have this extension
-config.walletFileDefaultExt = 'wallet';
+export const Config: IConfig = {
+  appName: 'WalletShell',
+  appDescription: 'TurtleCoin Wallet',
+  appSlogan: 'Slow and steady wins the race!',
+  appId: 'lol.turtlecoin.walletshell',
+  appGitRepo: 'https://github.com/turtlecoin/turtle-wallet-electron',
 
-// change this to match your wallet service executable filename
-config.walletServiceBinaryFilename = 'turtle-service';
+  // default port number for your daemon (e.g. TurtleCoind)
+  daemonDefaultRpcPort: 11898,
 
-// version on the bundled service (turtle-service)
-config.walletServiceBinaryVersion = "v0.13.0";
+  // wallet file created by this app will have this extension
+  walletFileDefaultExt: 'wallet',
 
-// config file format supported by wallet service, possible values:
-// ini -->  for turtle service (or its forks) version <= v0.8.3
-// json --> for turtle service (or its forks) version >= v0.8.4
-config.walletServiceConfigFormat = "json";
+  // change this to match your wallet service executable filename
+  walletServiceBinaryFilename: 'turtle-service',
 
-// default port number for your wallet service (e.g. turtle-service)
-config.walletServiceRpcPort = 8070;
+  // version on the bundled service (turtle-service)
+  walletServiceBinaryVersion: "v0.13.0",
 
-// block explorer url, the [[TX_HASH]] will be substituted w/ actual transaction hash
-config.blockExplorerUrl = 'https://explorer.turtlecoin.lol/transaction.html?hash=[[TX_HASH]]';
+  // config file format supported by wallet service, possible values:
+  // ini -->  for turtle service (or its forks) version <= v0.8.3
+  // json --> for turtle service (or its forks) version >= v0.8.4
+  walletServiceConfigFormat: "json",
 
-// default remote node to connect to, set this to a known reliable node for 'just works' user experience
-config.remoteNodeDefaultHost = 'turtlenode.co';
+  // default port number for your wallet service (e.g. turtle-service)
+  walletServiceRpcPort: 8070,
 
+  // block explorer url, the [[TX_HASH]] will be substituted w/ actual transaction hash
+  blockExplorerUrl: 'https://explorer.turtlecoin.lol/transaction.html?hash=[[TX_HASH]]',
 
-// remote node list update url, set to null if you don't have one
-// for TRTL:
-// raw list: https://raw.githubusercontent.com/turtlecoin/turtlecoin-nodes-json/master/turtlecoin-nodes.json
-// filtered: https://trtl.nodes.pub/api/getNodes
-config.remoteNodeListUpdateUrl = 'https://trtl.nodes.pub/api/getNodes';
+  // default remote node to connect to, set this to a known reliable node for 'just works' user experience
+  remoteNodeDefaultHost: 'turtlenode.co',
 
-// set to false if using raw/unfiltered node list
-config.remoteNodeListFiltered = true;
+  // remote node list update url, set to null if you don't have one
+  // for TRTL:
+  // raw list: https://raw.githubusercontent.com/turtlecoin/turtlecoin-nodes-json/master/turtlecoin-nodes.json
+  // filtered: https://trtl.nodes.pub/api/getNodes
+  remoteNodeListUpdateUrl: 'https://trtl.nodes.pub/api/getNodes',
 
-// fallback remote node list, in case fetching update failed, fill this with known to works remote nodes
-config.remoteNodeListFallback = [
-  'turtlenode.co:11898',
-  'nodes.hashvault.pro:11898',
-  'turtle.mine.nu:11898',
-];
-config.remoteNodeCacheSupported = false;
-config.remoteNodeSslSupported = false;
+  // set to false if using raw/unfiltered node list
+  remoteNodeListFiltered: true,
 
-// your currency name
-config.assetName = 'TurtleCoin';
-// your currency ticker
-config.assetTicker = 'TRTL';
-// your currency address prefix, for address validation
-config.addressPrefix = 'TRTL';
-// standard wallet address length, for address validation
-config.addressLength = 99;
-// integrated wallet address length, for address validation. Added length is length of payment ID encoded in base58.
-config.integratedAddressLength = config.addressLength + ((64 * 11) / 8);
+  // fallback remote node list, in case fetching update failed, fill this with known to works remote nodes
+  remoteNodeListFallback: [
+    'turtlenode.co:11898',
+    'nodes.hashvault.pro:11898',
+    'turtle.mine.nu:11898',
+  ],
+  remoteNodeCacheSupported: false,
+  remoteNodeSslSupported: false,
 
-// minimum fee for sending transaction
-config.minimumFee = 0.1;
-// minimum amount for sending transaction
-config.mininumSend = 0.1;
-// default mixin/anonimity for transaction
-config.defaultMixin = 3;
-// to represent human readable value
-config.decimalPlaces = 2;
-// to convert from atomic unit
-config.decimalDivisor = 10 ** config.decimalPlaces;
+  // your currency name
+  assetName: 'TurtleCoin',
+  // your currency ticker
+  assetTicker: 'TRTL',
+  // your currency address prefix, for address validation
+  addressPrefix: 'TRTL',
+  // standard wallet address length, for address validation
+  addressLength: 99,
+  // integrated wallet address length, for address validation. Added length is length of payment ID encoded in base58.
+  integratedAddressLength: this.addressLength + ((64 * 11) / 8),
 
-// obfuscate address book entries, set to false if you want to save it in plain json file.
-// not for security because the encryption key is attached here
-config.addressBookObfuscateEntries = true;
-// key use to obfuscate address book contents
-config.addressBookObfuscationKey = '79009fb00ca1b7130832a42de45142cf6c4b7f333fe6fba5';
-// initial/sample entries to fill new address book
-config.addressBookSampleEntries = [
-  {
-    name: 'WalletShell Donation',
-    address: 'TRTLv1A26ngXApin33p1JsSE9Yf6REj97Xruz15D4JtSg1wuqYTmsPj5Geu2kHtBzD8TCsfd5dbdYRsrhNXMGyvtJ61AoYqLXVS',
-    paymentId: '',
-  }
-];
-// cipher config for private address book
-config.addressBookCipherConfig = {
-  algorithm: 'aes-256-gcm',
-  saltLenght: 128,
-  pbkdf2Rounds: 10000,
-  pbkdf2Digest: 'sha512'
-};
+  // minimum fee for sending transaction
+  minimumFee: 0.1,
+  // minimum amount for sending transaction
+  mininumSend: 0.1,
+  // default mixin/anonimity for transaction
+  defaultMixin: 3,
+  // to represent human readable value
+  decimalPlaces: 2,
+  // to convert from atomic unit
+  decimalDivisor: 10 ** this.decimalPlaces,
 
-module.exports = config;
+  // obfuscate address book entries, set to false if you want to save it in plain json file.
+  // not for security because the encryption key is attached here
+  addressBookObfuscateEntries: true,
+  // key use to obfuscate address book contents
+  addressBookObfuscationKey: '79009fb00ca1b7130832a42de45142cf6c4b7f333fe6fba5',
+  // initial/sample entries to fill new address book
+  addressBookSampleEntries: [
+    {
+      name: 'WalletShell Donation',
+      address: 'TRTLv1A26ngXApin33p1JsSE9Yf6REj97Xruz15D4JtSg1wuqYTmsPj5Geu2kHtBzD8TCsfd5dbdYRsrhNXMGyvtJ61AoYqLXVS',
+      paymentId: '',
+    }
+  ],
+  // cipher config for private address book
+  addressBookCipherConfig: {
+    algorithm: 'aes-256-gcm',
+    saltLenght: 128,
+    pbkdf2Rounds: 10000,
+    pbkdf2Digest: 'sha512'
+  },
+}
