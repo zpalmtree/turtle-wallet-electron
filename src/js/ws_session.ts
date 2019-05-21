@@ -1,7 +1,7 @@
 import Store from 'electron-store';
 import { config } from '../../src/js/ws_config';
 
-const settings: any = new Store({ name: 'Settings' });
+const settings: Store = new Store({ name: 'Settings' });
 const WS_VERSION: any = settings.get('version', 'unknown');
 const DEFAULT_TITLE: string = `${config.appName} ${WS_VERSION} - ${config.appDescription}`;
 const SESSION_KEY: string = 'wlshell';
@@ -77,16 +77,16 @@ export class WalletShellSession {
         };
     }
 
-    stickyVals: StickyValues = {
+    public stickyVals: StickyValues = {
         publicNodes: [],
         addressBook: null // {id: null, name: null, path: null, data: {}}
     };
     /* jshint ignore:start */
-    keys: object = Object.keys({ ...this.sessDefault, ...this.stickyVals });
+    public keys: object = Object.keys({ ...this.sessDefault, ...this.stickyVals });
 
     /* jshint ignore:end */
 
-    get = function (key) {
+    get (key) {
         key = key || false;
         if (!key) {
             return JSON.parse(sessionStorage.getItem(this.sessKey)) || this.sessDefault;
@@ -99,14 +99,14 @@ export class WalletShellSession {
         return JSON.parse(sessionStorage.getItem(this.sessKey))[key];
     };
 
-    getDefault = function (key) {
+    getDefault (key) {
         if (!key) {
             return this.sessDefault;
         }
         return this.sessDefault[key];
     };
 
-    set = function (key, val) {
+    set (key, val) {
         if (!this.keys.includes(key)) {
             throw new Error(`Invalid session key: ${key}`);
         }
@@ -116,7 +116,7 @@ export class WalletShellSession {
         return sessionStorage.setItem(this.sessKey, JSON.stringify(sessData));
     };
 
-    reset = function (key) {
+    reset (key) {
         if (key) {
             if (!this.sessDefault.hasOwnProperty(key)) {
                 throw new Error('Invalid session key');
@@ -136,7 +136,7 @@ export class WalletShellSession {
         /* jshint ignore: end */
     };
 
-    destroy = function () {
+    destroy () {
         return sessionStorage.removeItem(this.sessKey);
     };
 

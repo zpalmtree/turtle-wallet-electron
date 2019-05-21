@@ -11,7 +11,7 @@ import autoComplete from 'js-autocomplete';
 import async from 'async';
 import AgGrid from 'ag-grid-community';
 
-import { config } from '../../src/js/ws_config';
+import { config } from '../js/ws_config';
 const wsutil = require('./ws_utils');
 import { WalletShellSession } from '../js/ws_session';
 const WalletShellManager = require('./ws_manager');
