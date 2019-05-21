@@ -1,15 +1,15 @@
 import { app, dialog, Tray, Menu } from 'electron';
 import { IncomingMessage } from 'http';
-import * as Store from 'electron-store';
-import * as crypto from 'crypto';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as url from 'url';
-import * as https from 'https';
-import * as os from 'os';
-import * as log from 'electron-log';
+import Store from 'electron-store';
+import crypto from 'crypto';
+import path from 'path';
+import fs from 'fs';
+import url from 'url';
+import https from 'https';
+import os from 'os';
+import log from 'electron-log';
 import * as splash from '@trodi/electron-splashscreen';
-import * as config from './tsdist/js/ws_config';
+import config from './src/js/ws_config';
 
 interface AppConfig {
     promptExit: boolean;
@@ -81,8 +81,8 @@ log.transports.file.maxSize = 5 * 1024 * 1024;
 log.info(`Starting WalletShell ${WALLETSHELL_VERSION}`);
 if (IS_DEV || IS_DEBUG) log.warn(`Running in ${IS_DEV ? 'dev' : 'debug'} mode`);
 
-let trayIcon = path.join(__dirname, './tsdist/assets/tray.png');
-let trayIconHide = path.join(__dirname, './tsdist/assets/trayon.png');
+let trayIcon = path.join(__dirname, './src/assets/tray.png');
+let trayIconHide = path.join(__dirname, './src/assets/trayon.png');
 
 let win;
 let tray;
@@ -94,7 +94,7 @@ function createWindow() {
 
     const winOpts = {
         title: WIN_TITLE,
-        icon: path.join(__dirname, './tsdist/assets/walletshell_icon.png'),
+        icon: path.join(__dirname, './src/assets/walletshell_icon.png'),
         frame: true,
         width: DEFAULT_SIZE.width,
         height: DEFAULT_SIZE.height,
@@ -113,7 +113,7 @@ function createWindow() {
 
     win = splash.initSplashScreen({
         windowOpts: winOpts,
-        templateUrl: path.join(__dirname, "./tsdist/html/splash.html"),
+        templateUrl: path.join(__dirname, "./src/html/splash.html"),
         delay: 0,
         minVisible: 800,
         splashScreenOpts: {
@@ -125,7 +125,7 @@ function createWindow() {
 
     //load the index.html of the app.
     win.loadURL(url.format({
-        pathname: path.join(__dirname, './tsdist/html/index.html'),
+        pathname: path.join(__dirname, './src/html/index.html'),
         protocol: 'file:',
         slashes: true
     }));

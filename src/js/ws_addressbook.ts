@@ -1,4 +1,3 @@
-const fs = require('fs');
 const GCM = require('node-crypto-gcm').GCM;
 const config = require('./ws_config');
 const wsutil = require('./ws_utils');
