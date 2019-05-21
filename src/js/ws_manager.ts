@@ -8,7 +8,7 @@ import * as log from 'electron-log';
 import Store from 'electron-store';
 
 import { config } from '../../src/js/ws_config';
-const WalletShellSession = require('./ws_session');
+import { WalletShellSession } from '../js/ws_session';
 const WalletShellApi = require('./ws_api');
 const uiupdater = require('./wsui_updater');
 const wsutil = require('./ws_utils');

@@ -1,7 +1,6 @@
 /*jshint bitwise: false*/
 /* global AbortController */
 import { clipboard, remote, ipcRenderer, shell } from 'electron';
-import { config } from '../../src/js/ws_config';
 import os from 'os';
 import net from 'net';
 import path from 'path';
@@ -12,8 +11,9 @@ import autoComplete from 'js-autocomplete';
 import async from 'async';
 import AgGrid from 'ag-grid-community';
 
+import { config } from '../../src/js/ws_config';
 const wsutil = require('./ws_utils');
-const WalletShellSession = require('./ws_session');
+import { WalletShellSession } from '../js/ws_session';
 const WalletShellManager = require('./ws_manager');
 import { syncStatus } from './ws_constants';
 
