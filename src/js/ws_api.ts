@@ -1,5 +1,5 @@
 const request = require('request-promise-native');
-const config = require('./ws_config.js');
+import { config } from '../../src/js/ws_config';
 
 class WalletShellApi {
     constructor(args) {

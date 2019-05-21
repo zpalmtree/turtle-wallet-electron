@@ -1,6 +1,6 @@
 const Store = require('electron-store');
 const settings = new Store({ name: 'Settings' });
-const config = require('./ws_config');
+import { config } from '../../src/js/ws_config';
 
 const WS_VERSION = settings.get('version', 'unknown');
 const DEFAULT_TITLE = `${config.appName} ${WS_VERSION} - ${config.appDescription}`;

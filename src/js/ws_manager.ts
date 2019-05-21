@@ -9,7 +9,7 @@ const WalletShellSession = require('./ws_session');
 const WalletShellApi = require('./ws_api');
 const uiupdater = require('./wsui_updater');
 const wsutil = require('./ws_utils');
-const config = require('./ws_config');
+import { config } from '../../src/js/ws_config';
 const syncStatus = require('./ws_constants').syncStatus;
 
 const { remote } = require('electron');

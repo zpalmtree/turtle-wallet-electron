@@ -3,7 +3,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { nativeImage } = require('electron');
 const qr = require('qr-image');
-const config = require('./ws_config');
+import { config } from '../../src/js/ws_config';
 const fnv = require('fnv-plus');
 const GCM = require('node-crypto-gcm').GCM;
 

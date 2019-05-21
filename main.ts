@@ -1,5 +1,6 @@
 import { app, dialog, Tray, Menu } from 'electron';
 import { IncomingMessage } from 'http';
+import { config } from './src/js/ws_config';
 import Store from 'electron-store';
 import crypto from 'crypto';
 import path from 'path';
@@ -7,9 +8,8 @@ import fs from 'fs';
 import url from 'url';
 import https from 'https';
 import os from 'os';
-import log from 'electron-log';
+import * as log from 'electron-log';
 import * as splash from '@trodi/electron-splashscreen';
-import * as config from './src/js/ws_config';
 
 interface AppConfig {
     promptExit: boolean;

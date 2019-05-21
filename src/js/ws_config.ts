@@ -35,7 +35,7 @@ interface IConfig {
   addressBookCipherConfig: object,
 }
 
-export const Config: IConfig = {
+export const config: IConfig = {
   appName: 'WalletShell',
   appDescription: 'TurtleCoin Wallet',
   appSlogan: 'Slow and steady wins the race!',
