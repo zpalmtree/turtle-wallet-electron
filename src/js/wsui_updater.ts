@@ -1,9 +1,10 @@
-const { webFrame, remote } = require('electron');
-const Store = require('electron-store');
+import { webFrame, remote } from 'electron';
+import Store from 'electron-store';
+
 const wsutil = require('./ws_utils');
 const WalletShellSession = require('./ws_session');
 const config = require('./ws_config');
-const syncStatus = require('./ws_constants').syncStatus;
+import { syncStatus } from './ws_constants';
 const brwin = remote.getCurrentWindow();
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };

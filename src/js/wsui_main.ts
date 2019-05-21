@@ -15,7 +15,7 @@ import AgGrid from 'ag-grid-community';
 const wsutil = require('./ws_utils');
 const WalletShellSession = require('./ws_session');
 const WalletShellManager = require('./ws_manager');
-const syncStatus = require('./ws_constants').syncStatus;
+import { syncStatus } from './ws_constants';
 
 const wsmanager = new WalletShellManager();
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };

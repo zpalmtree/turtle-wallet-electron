@@ -1,4 +1,3 @@
-import { config } from '../../src/js/ws_config';
 import { remote } from 'electron';
 import path from 'path';
 import fs from 'fs';
@@ -8,12 +7,12 @@ import childProcess from 'child_process';
 import * as log from 'electron-log';
 import Store from 'electron-store';
 
-
+import { config } from '../../src/js/ws_config';
 const WalletShellSession = require('./ws_session');
 const WalletShellApi = require('./ws_api');
 const uiupdater = require('./wsui_updater');
 const wsutil = require('./ws_utils');
-const syncStatus = require('./ws_constants').syncStatus;
+import { syncStatus } from './ws_constants';
 
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };

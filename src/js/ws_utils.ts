@@ -1,11 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const { nativeImage } = require('electron');
-const qr = require('qr-image');
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import { nativeImage } from 'electron';
+import qr from 'qr-image';
 import { config } from '../../src/js/ws_config';
-const fnv = require('fnv-plus');
-const GCM = require('node-crypto-gcm').GCM;
+import fnv from 'fnv-plus';
+import GCM from 'node-crypto-gcm';
 
 const ADDRESS_REGEX_STR = `^${config.addressPrefix}(?=[aA-zZ0-9]*$)(?:.{${config.addressLength - config.addressPrefix.length}}|.{${config.integratedAddressLength - config.addressPrefix.length}})$`;
 const ADDRESS_REGEX = new RegExp(ADDRESS_REGEX_STR);

@@ -1,6 +1,7 @@
-const log = require('electron-log');
+import * as log from 'electron-log';
+import { syncStatus } from './ws_constants';
+
 const WalletShellApi = require('./ws_api');
-const syncStatus = require('./ws_constants').syncStatus;
 
 let DEBUG = false;
 log.transports.file.maxSize = 5 * 1024 * 1024;
