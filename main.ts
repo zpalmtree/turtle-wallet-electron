@@ -348,7 +348,9 @@ function serviceBinCheck() {
     if (DEFAULT_SERVICE_BIN.startsWith('/tmp')) {
         log.warn(`AppImage env, copying service bin file`);
         let targetPath = path.join(app.getPath('userData'), SERVICE_FILENAME);
+        try {
         fs.renameSync(targetPath, `${targetPath}.bak`);
+        } catch (_e) { }
         try {
             fs.copyFile(DEFAULT_SERVICE_BIN, targetPath, (err: NodeJS.ErrnoException) => {
                 if (err) {
