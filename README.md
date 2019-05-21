@@ -56,7 +56,9 @@ Please visit our wiki page: [WalletShell User Guide](../../wiki).
 ### Building/Packaging WalletShell
 You need to have `Node.js` and `npm` installed, go to https://nodejs.org and find out how to get it installed on your platform.
 
-Once you have Node+npm installed:
+You'll need `typescript` installed (install it with `npm` using `npm i -g typescript`)
+
+Once you have Node+npm and typescript installed:
 ```
 # assuming you're building it on GNU/Linux
 # first, download turtle-service binary for each platform
@@ -72,13 +74,13 @@ $ cd turtle-wallet-electron
 $ npm install
 
 # compile the typescript
-$ tsc ; tsc main.ts
+$ tsc 
 
 # create build+dist directory
 $ mkdir -p ./build && mkdir -p ./dist
 
 # copy/symlink icons from assets, required for packaging
-$ cp ./tsdist/assets/icon.* ./build/
+$ cp ./src/assets/icon.* ./build/
 
 # build GNU/Linux package
 $ mkdir -p ./bin/lin
