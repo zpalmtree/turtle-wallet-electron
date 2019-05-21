@@ -1,7 +1,7 @@
-const Store = require('electron-store');
-const settings = new Store({ name: 'Settings' });
+import Store from 'electron-store';
 import { config } from '../../src/js/ws_config';
 
+const settings = new Store({ name: 'Settings' });
 const WS_VERSION = settings.get('version', 'unknown');
 const DEFAULT_TITLE = `${config.appName} ${WS_VERSION} - ${config.appDescription}`;
 const SESSION_KEY = 'wlshell';

@@ -1,18 +1,20 @@
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const net = require('net');
-const childProcess = require('child_process');
-const log = require('electron-log');
-const Store = require('electron-store');
+import { config } from '../../src/js/ws_config';
+import { remote } from 'electron';
+import path from 'path';
+import fs from 'fs';
+import os from 'os';
+import net from 'net';
+import childProcess from 'child_process';
+import * as log from 'electron-log';
+import Store from 'electron-store';
+
+
 const WalletShellSession = require('./ws_session');
 const WalletShellApi = require('./ws_api');
 const uiupdater = require('./wsui_updater');
 const wsutil = require('./ws_utils');
-import { config } from '../../src/js/ws_config';
 const syncStatus = require('./ws_constants').syncStatus;
 
-const { remote } = require('electron');
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
 const wsession = new WalletShellSession(sessConfig);

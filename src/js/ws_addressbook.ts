@@ -1,5 +1,6 @@
-const GCM = require('node-crypto-gcm').GCM;
+import GCM from 'node-crypto-gcm';
 import { config } from '../../src/js/ws_config';
+
 const wsutil = require('./ws_utils');
 
 var WalletShellAddressBook = function (path, name, pass) {
