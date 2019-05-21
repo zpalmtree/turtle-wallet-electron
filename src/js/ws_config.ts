@@ -46,7 +46,7 @@ export const config: IConfig = {
   daemonDefaultRpcPort: 11898,
 
   // wallet file created by this app will have this extension
-  walletFileDefaultExt: 'wallet',
+  walletFileDefaultExt: 'twl',
 
   // change this to match your wallet service executable filename
   walletServiceBinaryFilename: 'turtle-service',
