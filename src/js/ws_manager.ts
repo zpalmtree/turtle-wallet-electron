@@ -11,9 +11,10 @@ import { config } from '../../src/js/ws_config';
 const WalletShellSession = require('./ws_session');
 const WalletShellApi = require('./ws_api');
 const uiupdater = require('./wsui_updater');
-const wsutil = require('./ws_utils');
+import { Utils } from './ws_utils';
 import { syncStatus } from './ws_constants';
 
+const wsutil = new Utils();
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
 const wsession = new WalletShellSession(sessConfig);
