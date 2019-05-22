@@ -1,6 +1,5 @@
 import GCM from 'node-crypto-gcm';
 import { config } from './ws_config';
-
 import { Utils } from './ws_utils';
 
 const wsutil = new Utils();
