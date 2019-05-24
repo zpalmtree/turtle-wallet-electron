@@ -8,6 +8,7 @@ const SESSION_KEY: string = 'wlshell';
 
 interface Options {
     walletConfig: string | undefined;
+    debug: boolean;
 }
 
 interface SessionDefault {
@@ -86,7 +87,7 @@ export class WalletShellSession {
 
     /* jshint ignore:end */
 
-    get (key) {
+    get(key) {
         key = key || false;
         if (!key) {
             return JSON.parse(sessionStorage.getItem(this.sessKey)) || this.sessDefault;
@@ -99,14 +100,14 @@ export class WalletShellSession {
         return JSON.parse(sessionStorage.getItem(this.sessKey))[key];
     };
 
-    getDefault (key) {
+    getDefault(key) {
         if (!key) {
             return this.sessDefault;
         }
         return this.sessDefault[key];
     };
 
-    set (key, val) {
+    set(key, val) {
         if (!this.keys.includes(key)) {
             throw new Error(`Invalid session key: ${key}`);
         }
@@ -116,7 +117,7 @@ export class WalletShellSession {
         return sessionStorage.setItem(this.sessKey, JSON.stringify(sessData));
     };
 
-    reset (key) {
+    reset(key) {
         if (key) {
             if (!this.sessDefault.hasOwnProperty(key)) {
                 throw new Error('Invalid session key');
@@ -136,7 +137,7 @@ export class WalletShellSession {
         /* jshint ignore: end */
     };
 
-    destroy () {
+    destroy() {
         return sessionStorage.removeItem(this.sessKey);
     };
 
