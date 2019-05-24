@@ -49,9 +49,7 @@ export class WalletShellSession {
     public eventName: string = 'sessionUpdated';
     public sessDefault: SessionDefault;
     storage: void;
-    stickyVals: {
-    publicNodes: any[]; addressBook: any; // {id: null, name: null, path: null, data: {}}
-    };
+    stickyVals: StickyValues;
     keys: string[];
 
     constructor(opts?: Options) {
