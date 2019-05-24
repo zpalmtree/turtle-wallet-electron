@@ -1,7 +1,8 @@
 import GCM from 'node-crypto-gcm';
-import { config } from '../../src/js/ws_config';
+import { config } from './ws_config';
+import { Utils } from './ws_utils';
 
-const wsutil = require('./ws_utils');
+const wsutil = new Utils();
 
 var WalletShellAddressBook = function (path, name, pass) {
     if (!(this instanceof WalletShellAddressBook)) return new WalletShellAddressBook(pass, name, path);

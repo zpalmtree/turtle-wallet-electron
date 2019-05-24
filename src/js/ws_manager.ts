@@ -9,14 +9,18 @@ import Store from 'electron-store';
 
 import { config } from '../../src/js/ws_config';
 import { WalletShellSession } from '../js/ws_session';
-const WalletShellApi = require('./ws_api');
+import { WalletShellApi } from './ws_api';
 const uiupdater = require('./wsui_updater');
-const wsutil = require('./ws_utils');
+import { Utils } from './ws_utils';
 import { syncStatus } from './ws_constants';
 
+
+const wsutil = new Utils();
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
 const wsession = new WalletShellSession(sessConfig);
+// const wsapi = new WalletShellApi(settings);
+
 
 const SERVICE_LOG_DEBUG = wsession.get('debug');
 const SERVICE_LOG_LEVEL_DEFAULT = 0;
@@ -76,7 +80,9 @@ WalletShellManager.prototype.init = function () {
         let cfg = {
             service_host: this.serviceHost,
             service_port: this.servicePort,
-            service_password: this.servicePassword
+            service_password: this.servicePassword,
+            minimum_fee: (config.minimumFee * config.decimalDivisor),
+            anonymity: config.defaultMixin,
         };
         this.serviceApi = new WalletShellApi(cfg);
     }).catch((err) => {

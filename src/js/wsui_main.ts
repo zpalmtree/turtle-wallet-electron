@@ -11,12 +11,12 @@ import autoComplete from 'js-autocomplete';
 import async from 'async';
 import AgGrid from 'ag-grid-community';
 
-import { config } from '../js/ws_config';
-const wsutil = require('./ws_utils');
+import { Utils } from './ws_utils';
 import { WalletShellSession } from '../js/ws_session';
 const WalletShellManager = require('./ws_manager');
 import { syncStatus } from './ws_constants';
 
+const wsutil = new Utils();
 const wsmanager = new WalletShellManager();
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
 

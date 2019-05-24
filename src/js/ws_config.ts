@@ -101,7 +101,7 @@ export const config: IConfig = {
   minimumFee: 0.1,
   // minimum amount for sending transaction
   mininumSend: 0.1,
-  // default mixin/anonimity for transaction
+  // default mixin/anonymity for transaction
   defaultMixin: 3,
   // to represent human readable value
   decimalPlaces: 2,
