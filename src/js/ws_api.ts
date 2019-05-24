@@ -1,17 +1,26 @@
 import request from 'request-promise-native';
 import { config } from '../../src/js/ws_config';
+import * as log from 'electron-log';
 
-class WalletShellApi {
-    constructor(args) {
-        args = args || {};
-        if (!(this instanceof WalletShellApi)) return new WalletShellApi(args);
-        this.service_host = args.service_host || '127.0.0.1';
-        this.service_port = args.service_port || config.walletServiceRpcPort;
-        this.service_password = args.service_password || "WHATEVER1234567891";
-        this.minimum_fee = (args.minimum_fee !== undefined) ? args.minimum_fee : (config.minimumFee * config.decimalDivisor);
-        this.anonimity = config.defaultMixin;
-    }
-    _sendRequest(method, params, timeout) {
+interface WalletShellSettings {
+    service_host: string;
+    service_port: string;
+    service_password: string;
+    minimum_fee: string;
+    anonimity: string;
+}
+
+export class WalletShellApi {
+    
+    constructor(args: WalletShellSettings) {
+        service_host: args.service_host || '127.0.0.1';
+        service_port: args.service_port || config.walletServiceRpcPort;
+        service_password: args.service_password || "WHATEVER1234567891";
+        minimum_fee: (args.minimum_fee !== undefined) ? args.minimum_fee : (config.minimumFee * config.decimalDivisor);
+        anonimity: config.defaultMixin;
+    };
+
+    private _sendRequest(method, params, timeout) {
         return new Promise((resolve, reject) => {
             if (method.length === 0) return reject(new Error('Invalid Method'));
             params = params || {};
@@ -20,7 +29,7 @@ class WalletShellApi {
                 jsonrpc: '2.0',
                 method: method,
                 params: params,
-                password: this.service_password
+                        password: this.service_password
             };
             let s_host = this.service_host;
             let s_port = this.service_port;
@@ -47,7 +56,7 @@ class WalletShellApi {
         });
     }
     // only get single addres only, no multi address support for this wallet, yet
-    getAddress() {
+    public getAddress() {
         return new Promise((resolve, reject) => {
             this._sendRequest('getAddresses').then((result) => {
                 return resolve(result.addresses[0]);
@@ -56,7 +65,7 @@ class WalletShellApi {
             });
         });
     }
-    getFeeInfo() {
+    public getFeeInfo() {
         return new Promise((resolve, reject) => {
             this._sendRequest('getFeeInfo').then((result) => {
                 return resolve(result);
@@ -65,7 +74,7 @@ class WalletShellApi {
             });
         });
     }
-    getBalance(params) {
+    public getBalance(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -79,7 +88,7 @@ class WalletShellApi {
             });
         });
     }
-    getStatus() {
+    public getStatus() {
         return new Promise((resolve, reject) => {
             this._sendRequest('getStatus').then((result) => {
                 return resolve(result);
@@ -88,7 +97,7 @@ class WalletShellApi {
             });
         });
     }
-    save() {
+    public save() {
         return new Promise((resolve, reject) => {
             this._sendRequest('save', {}, 6000).then(() => {
                 return resolve();
@@ -97,7 +106,7 @@ class WalletShellApi {
             });
         });
     }
-    getViewKey() {
+    public getViewKey() {
         return new Promise((resolve, reject) => {
             this._sendRequest('getViewKey').then((result) => {
                 return resolve(result);
@@ -106,7 +115,7 @@ class WalletShellApi {
             });
         });
     }
-    getSpendKeys(params) {
+    public getSpendKeys(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -122,7 +131,7 @@ class WalletShellApi {
             });
         });
     }
-    getMnemonicSeed(params) {
+    public getMnemonicSeed(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -138,7 +147,7 @@ class WalletShellApi {
             });
         });
     }
-    getBackupKeys(params) {
+    public getBackupKeys(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -170,7 +179,7 @@ class WalletShellApi {
             });
         });
     }
-    getTransactions(params) {
+    public getTransactions(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.firstBlockIndex = params.firstBlockIndex || 1;
@@ -187,7 +196,7 @@ class WalletShellApi {
         });
     }
     // send single transaction
-    sendTransaction(params) {
+    public sendTransaction(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.amount = params.amount || false;
@@ -212,7 +221,7 @@ class WalletShellApi {
             });
         });
     }
-    reset(params) {
+    public reset(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.scanHeight = params.scanHeight || 0;
@@ -227,7 +236,7 @@ class WalletShellApi {
             });
         });
     }
-    estimateFusion(params) {
+    public estimateFusion(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             if (!params.threshold) return reject(new Error('Missing threshold parameter'));
@@ -238,7 +247,7 @@ class WalletShellApi {
             });
         });
     }
-    sendFusionTransaction(params) {
+    public sendFusionTransaction(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             if (!params.threshold) return reject(new Error('Missing threshold parameter'));
@@ -250,7 +259,7 @@ class WalletShellApi {
             });
         });
     }
-    createIntegratedAddress(params) {
+    public createIntegratedAddress(params) {
         return new Promise((resolve, reject) => {
             params = params || {};
             if (!params.address || !params.paymentId) {
@@ -265,5 +274,3 @@ class WalletShellApi {
         });
     }
 }
-
-module.exports = WalletShellApi;

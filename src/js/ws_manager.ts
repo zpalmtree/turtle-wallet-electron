@@ -9,15 +9,18 @@ import Store from 'electron-store';
 
 import { config } from '../../src/js/ws_config';
 const WalletShellSession = require('./ws_session');
-const WalletShellApi = require('./ws_api');
+import { WalletShellApi } from './ws_api';
 const uiupdater = require('./wsui_updater');
 import { Utils } from './ws_utils';
 import { syncStatus } from './ws_constants';
+
 
 const wsutil = new Utils();
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
 const wsession = new WalletShellSession(sessConfig);
+// const wsapi = new WalletShellApi(settings);
+
 
 const SERVICE_LOG_DEBUG = wsession.get('debug');
 const SERVICE_LOG_LEVEL_DEFAULT = 0;
@@ -79,7 +82,7 @@ WalletShellManager.prototype.init = function () {
             service_port: this.servicePort,
             service_password: this.servicePassword
         };
-        this.serviceApi = new WalletShellApi(cfg);
+        this.serviceApi = new WalletShellApi(settings);
     }).catch((err) => {
         log.error("Unable to find a port to listen to, please check your firewall settings");
         log.error(err.message);
