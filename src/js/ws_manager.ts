@@ -80,9 +80,11 @@ WalletShellManager.prototype.init = function () {
         let cfg = {
             service_host: this.serviceHost,
             service_port: this.servicePort,
-            service_password: this.servicePassword
+            service_password: this.servicePassword,
+            minimum_fee: (config.minimumFee * config.decimalDivisor),
+            anonymity: config.defaultMixin,
         };
-        this.serviceApi = new WalletShellApi(settings);
+        this.serviceApi = new WalletShellApi(cfg);
     }).catch((err) => {
         log.error("Unable to find a port to listen to, please check your firewall settings");
         log.error(err.message);

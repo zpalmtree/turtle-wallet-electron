@@ -7,18 +7,28 @@ interface WalletShellSettings {
     service_port: string;
     service_password: string;
     minimum_fee: string;
-    anonimity: string;
+    anonymity: string;
 }
 
 export class WalletShellApi {
+
+    service_host: string;
+    service_port: string | number;
+    service_password: string;
+    minimum_fee: string | number;
+    anonymity: number;
     
     constructor(args: WalletShellSettings) {
-        service_host: args.service_host || '127.0.0.1';
-        service_port: args.service_port || config.walletServiceRpcPort;
-        service_password: args.service_password || "WHATEVER1234567891";
-        minimum_fee: (args.minimum_fee !== undefined) ? args.minimum_fee : (config.minimumFee * config.decimalDivisor);
-        anonimity: config.defaultMixin;
+        this.service_host = args.service_host || '127.0.0.1';
+        this.service_port = args.service_port || config.walletServiceRpcPort;
+        this.service_password = args.service_password || "WHATEVER1234567891";
+        this.minimum_fee = (args.minimum_fee !== undefined) ? args.minimum_fee : (config.minimumFee * config.decimalDivisor);
+        this.anonymity = config.defaultMixin;
     };
+
+    public testData() {
+        log.debug(this.service_password)
+    }
 
     private _sendRequest(method, params, timeout) {
         return new Promise((resolve, reject) => {
@@ -251,7 +261,7 @@ export class WalletShellApi {
         return new Promise((resolve, reject) => {
             params = params || {};
             if (!params.threshold) return reject(new Error('Missing threshold parameter'));
-            if (!params.anonimity) params.anonimity = this.anonimity;
+            if (!params.anonymity) params.anonymity = this.anonymity;
             this._sendRequest('sendFusionTransaction', params).then((result) => {
                 return resolve(result);
             }).catch((err) => {
