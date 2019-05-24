@@ -48,6 +48,11 @@ export class WalletShellSession {
     public sessKey: string = SESSION_KEY;
     public eventName: string = 'sessionUpdated';
     public sessDefault: SessionDefault;
+    storage: void;
+    stickyVals: {
+    publicNodes: any[]; addressBook: any; // {id: null, name: null, path: null, data: {}}
+    };
+    keys: string[];
 
     constructor(opts?: Options) {
         this.sessDefault = {
@@ -76,16 +81,13 @@ export class WalletShellSession {
             fusionProgress: false,
             addressBookErr: false
         };
+        this.stickyVals = {
+            publicNodes: [],
+            addressBook: null // {id: null, name: null, path: null, data: {}}
+        }
+        this.keys = Object.keys({ ...this.sessDefault, ...this.stickyVals });
+        this.storage = sessionStorage.setItem(this.sessKey, JSON.stringify({ ...this.sessDefault, ...this.stickyVals }));
     }
-
-    public stickyVals: StickyValues = {
-        publicNodes: [],
-        addressBook: null // {id: null, name: null, path: null, data: {}}
-    };
-    /* jshint ignore:start */
-    public keys: object = Object.keys({ ...this.sessDefault, ...this.stickyVals });
-
-    /* jshint ignore:end */
 
     get(key) {
         key = key || false;
